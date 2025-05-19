@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Tweet extends Model
 {
     use HasFactory;
+
+    // TweetモデルからUserモデルへの関連付け
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
