@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Tweet;
+use Carbon\Carbon;
 
 class TweetService
 {
@@ -11,7 +12,7 @@ class TweetService
         return Tweet::orderBy('created_at', 'DESC')->get();
     }
 
-    // 自分のtweetかどうかをチェック
+    // 自分のtweetかチェック
     public function checkOwnTweet(int $userId, int $tweetId): bool
     {
         $tweet = Tweet::where('id', $tweetId)->first();
@@ -20,5 +21,11 @@ class TweetService
         }
 
         return $tweet->user_id === $userId;
+    }
+    public function countYesterdayTweets(): int
+    {
+        return Tweet::whereDate('created_at', '>=', Carbon::yesterday()->toDateTimeString())
+            ->whereDate('created_at', '<', Carbon::today()->toDateTimeString())
+            ->count();
     }
 }
