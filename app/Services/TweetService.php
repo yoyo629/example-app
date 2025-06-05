@@ -15,7 +15,7 @@ class TweetService
         return Tweet::with('images')->orderBy('created_at', 'DESC')->get();
     }
 
-    // 自分のtweetかどうかをチェック
+    // 自分のtweetかどうかをチェックするメソッド
     public function checkOwnTweet(int $userId, int $tweetId): bool
     {
         $tweet = Tweet::where('id', $tweetId)->first();
