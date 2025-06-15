@@ -17,15 +17,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Cloudinary::class, function () {
-            return new Cloudinary([
-                'cloud' => [
-                    'cloud_name' => config('cloudinary.cloud_name'),
-                    'api_key'    => config('cloudinary.api_key'),
-                    'api_secret' => config('cloudinary.api_secret'),
-                ],
-            ]);
-        });
+        // Cloudinary の設定が存在する場合のみバインド（CIなど環境未設定時のエラー防止）
+        if (env('CLOUDINARY_CLOUD_NAME') && env('CLOUDINARY_API_KEY') && env('CLOUDINARY_API_SECRET')) {
+            $this->app->bind(Cloudinary::class, function () {
+                return new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => config('cloudinary.cloud_name'),
+                        'api_key'    => config('cloudinary.api_key'),
+                        'api_secret' => config('cloudinary.api_secret'),
+                    ],
+                ]);
+            });
+        }
+
+        // ImageManagerInterface のバインド
         if ($this->app->environment('production')) {
             $this->app->bind(ImageManagerInterface::class, CloudinaryImageManager::class);
         } else {
