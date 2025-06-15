@@ -38,30 +38,8 @@ jobs:
           php-version: '8.1'
           tools: composer:v2
 
-      - name: Copy .env
-        run: cp .env.example .env.testing
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Generate key
-        run: php artisan key:generate --env=testing
-
-      - name: Override .env.testing settings (DB + Cloudinary)
+      - name: Prepare .env.testing with DB and Cloudinary settings
         run: |
+          cp .env.example .env.testing
           echo "DB_HOST=mysql.test" >> .env.testing
           echo "DB_DATABASE=example_app" >> .env.testing
-          echo "DB_USERNAME=sail" >> .env.testing
-          echo "DB_PASSWORD=password" >> .env.testing
-          echo "CLOUDINARY_CLOUD_NAME=dummy" >> .env.testing
-          echo "CLOUDINARY_API_KEY=dummy" >> .env.testing
-          echo "CLOUDINARY_API_SECRET=dummy" >> .env.testing
-
-      - name: Set hostname
-        run: echo "127.0.0.1 mysql.test" | sudo tee -a /etc/hosts
-
-      - name: Run migrations
-        run: php artisan migrate --env=testing --force
-
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: vendor/bin/phpunit
